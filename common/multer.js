@@ -3,6 +3,7 @@
  */
 const debug = require("debug")("http:multer");
 const multer = require('multer')
+const path = require('path');
 
 /**
  * ファイルアップロードディレクトリ
@@ -17,7 +18,7 @@ const multer = require('multer')
 const storage = multer.diskStorage({
   /** どのフォルダにどんな名前で保存するか */
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '/uploads/local/'))
+    cb(null, path.join(__dirname, '../uploads/local/'))
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname)
@@ -27,36 +28,56 @@ const storage = multer.diskStorage({
 /**
  * multerのファイルアップロードエラーハンドラ関数
  * mime-typeが画像の拡張子のみ許可する
- * 他にもファイルのチェック方法はあるみたいだ..mime-typeは偽装可能
+ * 他にも実行ファイルを防ぐ、ファイルのチェック方法はあるみたい。
+ * mime-typeは偽装可能
  * @param {*} req
  * @param {*} file
  * @param {*} cb
  */
-const fileFilter = (req, file, cb) => {
+/** imgフィルタ */
+const fileFilterImg = (req, file, cb) => {
   debug(file.mimetype);
   if (["image/png", "image/jpeg", "image/jpg"].includes(file.mimetype)) {
-    callback(null, true);
+    cb(null, true);
     return;
   }
-  callback(new TypeError("Invalid File Type"));
+  cb(new TypeError("Invalid File Type"));
 };
+/** pdf,csvフィルタ */
+const fileFilterPdf = (req, file, cb) => {
+  debug(file.mimetype);
+  if (["application/pdf"].includes(file.mimetype)) {
+    cb(null, true);
+    return;
+  }
+  cb(new TypeError("Invalid File Type"));
+};
+
 
 /**
  * multerのインスタンス設定
  * 下記に各種類の細かい設定
  * ファイル種類毎に変えよう！
  */
-const upload = multer({
+/** 画像ファイルアップロード */
+const uploadImg = multer({
   storage: storage,
-  fileFilter: fileFilter,
+  fileFilter: fileFilterImg,
+})
+/** pdfアップロード */
+const uploadPdf = multer({
+  storage: storage,
+  fileFilter: fileFilterImg,
 })
 
-module.exports = { upload, fileFilter };
+
+module.exports = { uploadImg, uploadPdf };
 
 
 /** 使用例 */
 
 /** ファイルサイズ制限 */
+// const { upload } = require("./common/multer");
 
 // /** file単体で送る場合のファイルとリクエストbody */
 // app.post('/profile', upload.single('avatar'), (req, res, next) => {

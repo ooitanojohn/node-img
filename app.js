@@ -7,7 +7,7 @@ var cookieParser = require('cookie-parser');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const debug = require("debug")("http:multer");
-const { upload } = require("./common/multer");
+const { uploadImg } = require("./common/multer");
 
 var app = express();
 
@@ -27,7 +27,7 @@ app.use('/users', usersRouter);
 /** ファイルサイズ制限 */
 
 /** file単体で送る場合のファイルとリクエストbody */
-app.post('/profile', upload.single('avatar'), (req, res, next) => {
+app.post('/profile', uploadImg.single('avatar'), (req, res, next) => {
   debug(req.file);
   debug(req.body);
   // req.body.jsonを参照
@@ -35,14 +35,14 @@ app.post('/profile', upload.single('avatar'), (req, res, next) => {
 });
 
 /** 複数fileをアップロードする時 */
-app.post('/photos/upload', upload.array('photos', 12), (req, res, next) => {
+app.post('/photos/upload', uploadImg.array('photos', 12), (req, res, next) => {
   debug(req.files);
   debug(req.body);
   res.redirect(301, '/');
 });
 
 /** 複数種類nameの組み合わせ */
-const cpUpload = upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
+const cpUpload = uploadImg.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
 app.post('/cool-profile', cpUpload, (req, res, next) => {
   debug(req.files);
   debug(req.body);
