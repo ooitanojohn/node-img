@@ -1,15 +1,16 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
 
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const multer = require('multer')
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 const debug = require("debug")("http:multer");
 const { uploadImgAdmin } = require("./common/multer");
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,34 +26,70 @@ app.use('/users', usersRouter);
 
 
 /** ファイルサイズ制限 */
-
+const uploadImgAdminSingle = uploadImgAdmin.single('avatar');
 /** file単体で送る場合のファイルとリクエストbody */
-app.post('/profile', uploadImgAdmin.single('avatar'), (req, res, next) => {
+app.post('/single', (req, res, next) => {
   debug(req.file);
   debug(req.body);
+  try {
+    uploadImgAdminSingle(req, res, (err) => {
+      /** マルターで判定できたエラー  */
+      if (err instanceof multer.MulterError) {
+        throw new Error(err);
+      } else if (err) {
+        /** 謎エラー */
+        throw new Error(err);
+      }
+    })
+  } catch {
+    debug(err);
+    next(err);
+  }
   // req.body.jsonを参照
   res.redirect(301, '/');
 });
 
+const uploadImgAdminArray = uploadImgAdmin.array('photos', 12);
 /** 複数fileをアップロードする時 */
-app.post('/photos/upload', uploadImgAdmin.array('photos', 12), (req, res, next) => {
+app.post('/multiple', (req, res, next) => {
   debug(req.files);
   debug(req.body);
+  try {
+    uploadImgAdminArray(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        throw new Error(err);
+      } else if (err) {
+        throw new Error(err);
+      }
+    })
+  } catch {
+    debug(err);
+    next(err);
+  }
+
   res.redirect(301, '/');
 });
 
 /** 複数種類nameの組み合わせ */
-const cpUpload = uploadImgAdmin.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
-app.post('/cool-profile', cpUpload, (req, res, next) => {
+const uploadAdminField = uploadImgAdmin.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
+
+app.post('/multipart', (req, res, next) => {
   debug(req.files);
   debug(req.body);
+  try {
+    uploadAdminField(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        throw new Error(err);
+      } else if (err) {
+        throw new Error(err);
+      }
+    })
+  } catch {
+    debug(err);
+    next(err);
+  }
   res.redirect(301, '/');
 })
-
-
-
-
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -44,13 +44,14 @@ const storage = (folderName, fileName) => {
  */
 /** imgフィルタ */
 const fileFilterImg = (req, file, cb) => {
-  debug(file.mimetype);
+  debug(file);
   if (["image/png", "image/jpeg", "image/jpg"].includes(file.mimetype)) {
     cb(null, true);
     return;
   }
   cb(new TypeError("Invalid File Type"));
 };
+
 /** pdf,csvフィルタ */
 const fileFilterPdf = (req, file, cb) => {
   debug(file.mimetype);
@@ -72,18 +73,19 @@ const fileFilterPdf = (req, file, cb) => {
 const uploadImgAdmin = multer({
   storage: storage('test', 'temp'),
   fileFilter: fileFilterImg,
-})
+  // 画像の制限の最適が不明
+  // limits: {}
+});
 /** user */
 const uploadImgUser = multer({
   storage: storage,
   fileFilter: fileFilterImg,
-})
+});
 /** pdfアップロード */
 const uploadPdf = multer({
   storage: storage(),
   fileFilter: fileFilterPdf,
-})
-
+});
 
 module.exports = { uploadImgAdmin, uploadImgUser, uploadPdf };
 
