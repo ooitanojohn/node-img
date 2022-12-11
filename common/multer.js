@@ -14,16 +14,24 @@ const path = require('path');
  */
 /** バイナリデータで保存 */
 // const upload = multer({ dest: 'uploads/' });
-/** ???で保存  */
-const storage = multer.diskStorage({
-  /** どのフォルダにどんな名前で保存するか */
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads/local/'))
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname)
-  }
-})
+
+/**
+ * 保存するフォルダ、パス名を相対で指定する
+ * @param {*} folderName 保存したいフォルダ名を入力
+ * @param {*} fileName 保存したいファイル名を入力
+ * @returns multerEngine
+ */
+const storage = (folderName, fileName) => {
+  return multer.diskStorage({
+    /** どのフォルダにどんな名前で保存するか */
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, `../uploads/${folderName}/`))
+    },
+    filename: (req, file, cb) => {
+      cb(null, fileName + '.' + file.mimetype.split('/')[1])
+    }
+  })
+};
 
 /**
  * multerのファイルアップロードエラーハンドラ関数
@@ -60,18 +68,24 @@ const fileFilterPdf = (req, file, cb) => {
  * ファイル種類毎に変えよう！
  */
 /** 画像ファイルアップロード */
-const uploadImg = multer({
+/** admin */
+const uploadImgAdmin = multer({
+  storage: storage('test', 'temp'),
+  fileFilter: fileFilterImg,
+})
+/** user */
+const uploadImgUser = multer({
   storage: storage,
   fileFilter: fileFilterImg,
 })
 /** pdfアップロード */
 const uploadPdf = multer({
-  storage: storage,
-  fileFilter: fileFilterImg,
+  storage: storage(),
+  fileFilter: fileFilterPdf,
 })
 
 
-module.exports = { uploadImg, uploadPdf };
+module.exports = { uploadImgAdmin, uploadImgUser, uploadPdf };
 
 
 /** 使用例 */
