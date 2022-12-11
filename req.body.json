@@ -1,0 +1,10 @@
+{
+  "fieldname": "avatar", // フォームで指定されたフィールド名
+  "originalname": "calendar2023.pdf", // ユーザーのコンピューター上のファイルの名前
+  "encoding": "7bit", // ファイルのエンコーディングタイプ
+  "mimetype": "application/pdf", // ファイルのMIMEタイプ
+  "destination": "uploads/", // ファイルが保存されているフォルダ	DiskStorage
+  "filename": "d04f34eccc2cf8100b65ed726f28c14b", // 内のファイルの名前 destination	DiskStorage
+  "path": "uploads\\d04f34eccc2cf8100b65ed726f28c14b", // アップロードされたファイルへのフルパス	DiskStorage
+  "size": 7709762 // バイト単位のファイルのサイズ
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <h2>単体ファイルupload</h2>
+    <form action="/profile" method="post" enctype="multipart/form-data">
+      <input type="file" name="avatar" />
+      <button type="submit">送信</button>
+    </form>
+    <h2>複数ファイルアップロード</h2>
+    <form action="/photos/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="photos" multiple />
+      <button type="submit">送信</button>
+    </form>
+    <h2>複数種類nameの組み合わせ</h2>
+    <form action="/photos/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="avatar" />
+      <input type="file" name="gallery" multiple />
+      <button type="submit">送信</button>
+    </form>
+  </body>
+</html>
