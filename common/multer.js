@@ -2,7 +2,7 @@
  * multer設定
  */
 const debug = require("debug")("http:multer");
-const multer = require('multer')
+const multer = require('multer');
 const path = require('path');
 
 /**
@@ -81,59 +81,106 @@ const uploadImgUser = multer({
   storage: storage,
   fileFilter: fileFilterImg,
 });
+
+/** 画像のリサイズ  */
+const memoryStorage = multer.memoryStorage;
+const uploadThumbnail = multer({
+  storage: storage(),
+  fileFilter: fileFilterImg,
+});
+
 /** pdfアップロード */
 const uploadPdf = multer({
   storage: storage(),
   fileFilter: fileFilterPdf,
 });
 
-module.exports = { uploadImgAdmin, uploadImgUser, uploadPdf };
+module.exports = { uploadImgAdmin, uploadImgUser, uploadPdf, uploadThumbnail };
 
 
 /** 使用例 */
 
-/** ファイルサイズ制限 */
-// const { upload } = require("./common/multer");
-
+// const uploadImgAdminSingle = uploadImgAdmin.single('avatar');
 // /** file単体で送る場合のファイルとリクエストbody */
-// app.post('/profile', upload.single('avatar'), (req, res, next) => {
+// app.post('/single', (req, res, next) => {
 //   debug(req.file);
 //   debug(req.body);
+//   try {
+//     uploadImgAdminSingle(req, res, (err) => {
+//       /** マルターで判定できたエラー  */
+//       if (err instanceof multer.MulterError) {
+//         throw new Error(err);
+//       } else if (err) {
+//         /** 謎エラー */
+//         throw new Error(err);
+//       }
+//     })
+//   } catch {
+//     debug(err);
+//     next(err);
+//   }
 //   // req.body.jsonを参照
 //   res.redirect(301, '/');
 // });
 
+// const uploadImgAdminArray = uploadImgAdmin.array('photos', 12);
 // /** 複数fileをアップロードする時 */
-// app.post('/photos/upload', upload.array('photos', 12), (req, res, next) => {
+// app.post('/multiple', (req, res, next) => {
 //   debug(req.files);
 //   debug(req.body);
+//   try {
+//     uploadImgAdminArray(req, res, (err) => {
+//       if (err instanceof multer.MulterError) {
+//         throw new Error(err);
+//       } else if (err) {
+//         throw new Error(err);
+//       }
+//     })
+//   } catch {
+//     debug(err);
+//     next(err);
+//   }
+
 //   res.redirect(301, '/');
 // });
 
 // /** 複数種類nameの組み合わせ */
-// const cpUpload = upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
-// app.post('/cool-profile', cpUpload, (req, res, next) => {
+// const uploadAdminField = uploadImgAdmin.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
+
+// app.post('/multipart', (req, res, next) => {
 //   debug(req.files);
 //   debug(req.body);
+//   try {
+//     uploadAdminField(req, res, (err) => {
+//       if (err instanceof multer.MulterError) {
+//         throw new Error(err);
+//       } else if (err) {
+//         throw new Error(err);
+//       }
+//     })
+//   } catch {
+//     debug(err);
+//     next(err);
+//   }
 //   res.redirect(301, '/');
 // })
 
 
 /** 使用例フォーム */
 
-    // <h2>単体ファイルupload</h2>
-    // <form action="/profile" method="post" enctype="multipart/form-data">
-    //   <input type="file" name="avatar" />
-    //   <button type="submit">送信</button>
-    // </form>
-    // <h2>複数ファイルアップロード</h2>
-    // <form action="/photos/upload" method="post" enctype="multipart/form-data">
-    //   <input type="file" name="photos" multiple />
-    //   <button type="submit">送信</button>
-    // </form>
-    // <h2>複数種類nameの組み合わせ</h2>
-    // <form action="/photos/upload" method="post" enctype="multipart/form-data">
-    //   <input type="file" name="avatar" />
-    //   <input type="file" name="gallery" multiple />
-    //   <button type="submit">送信</button>
-    // </form>
+{/* <h2>単体ファイルupload</h2>
+<form action="/single" method="post" enctype="multipart/form-data">
+  <input type="file" name="avatar" />
+  <button type="submit">送信</button>
+</form>
+<h2>複数ファイルアップロード</h2>
+<form action="/multiple" method="post" enctype="multipart/form-data">
+  <input type="file" name="photos" multiple />
+  <button type="submit">送信</button>
+</form>
+<h2>複数種類nameの組み合わせ</h2>
+<form action="/multipart" method="post" enctype="multipart/form-data">
+  <input type="file" name="avatar" />
+  <input type="file" name="gallery" multiple />
+  <button type="submit">送信</button>
+</form> */}

@@ -5,10 +5,10 @@ const cookieParser = require('cookie-parser');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const multer = require('multer')
+const multer = require('multer');
 
 const debug = require("debug")("http:multer");
-const { uploadImgAdmin } = require("./common/multer");
+const { uploadImgAdmin, uploadThumbnail } = require("./common/multer");
 
 const app = express();
 
@@ -25,7 +25,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 
-/** ファイルサイズ制限 */
 const uploadImgAdminSingle = uploadImgAdmin.single('avatar');
 /** file単体で送る場合のファイルとリクエストbody */
 app.post('/single', (req, res, next) => {
@@ -33,7 +32,7 @@ app.post('/single', (req, res, next) => {
   debug(req.body);
   try {
     uploadImgAdminSingle(req, res, (err) => {
-      /** マルターで判定できたエラー  */
+      /** マルターで判定できたエラー */
       if (err instanceof multer.MulterError) {
         throw new Error(err);
       } else if (err) {
@@ -46,6 +45,26 @@ app.post('/single', (req, res, next) => {
     next(err);
   }
   // req.body.jsonを参照
+  res.redirect(301, '/');
+});
+
+/** file単体で送る場合のファイルとリクエストbody */
+const uploadImgThumbnail = uploadThumbnail.single('thumbnail');
+app.post('/thumbnail', (req, res, next) => {
+  debug(req.file);
+  debug(req.body);
+  try {
+    uploadImgThumbnail(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        throw new Error(err);
+      } else if (err) {
+        throw new Error(err);
+      }
+    })
+  } catch {
+    debug(err);
+    next(err);
+  }
   res.redirect(301, '/');
 });
 
@@ -66,7 +85,6 @@ app.post('/multiple', (req, res, next) => {
     debug(err);
     next(err);
   }
-
   res.redirect(301, '/');
 });
 
