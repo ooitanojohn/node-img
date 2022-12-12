@@ -5,11 +5,10 @@ const cookieParser = require('cookie-parser');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const multer = require('multer');
 
 const debug = require("debug")("http:multer");
-const { uploadImgAdmin, uploadThumbnail } = require("./common/multer");
 
+const { multiUpload } = require("./app/controller/indexController");
 const app = express();
 
 // view engine setup
@@ -25,89 +24,79 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 
-const uploadImgAdminSingle = uploadImgAdmin.single('avatar');
-/** file単体で送る場合のファイルとリクエストbody */
-app.post('/single', (req, res, next) => {
-  debug(req.file);
-  debug(req.body);
-  try {
-    uploadImgAdminSingle(req, res, (err) => {
-      /** マルターで判定できたエラー */
-      if (err instanceof multer.MulterError) {
-        throw new Error(err);
-      } else if (err) {
-        /** 謎エラー */
-        throw new Error(err);
-      }
-    })
-  } catch {
-    debug(err);
-    next(err);
-  }
-  // req.body.jsonを参照
-  res.redirect(301, '/');
-});
+// const uploadImgAdminSingle = uploadImgAdmin.single('avatar');
+// /** file単体で送る場合のファイルとリクエストbody */
+// app.post('/single', (req, res, next) => {
+//   debug(req.file);
+//   debug(req.body);
+//   try {
+//     uploadImgAdminSingle(req, res, (err) => {
+//       /** マルターで判定できたエラー */
+//       if (err instanceof multer.MulterError) {
+//         throw new Error(err);
+//       } else if (err) {
+//         /** 謎エラー */
+//         throw new Error(err);
+//       }
+//     })
+//   } catch {
+//     debug(err);
+//     next(err);
+//   }
+//   // req.body.jsonを参照
+//   res.redirect(301, '/');
+// });
 
 /** file単体で送る場合のファイルとリクエストbody */
-const uploadImgThumbnail = uploadThumbnail.single('thumbnail');
-app.post('/thumbnail', (req, res, next) => {
-  debug(req.file);
-  debug(req.body);
-  try {
-    uploadImgThumbnail(req, res, (err) => {
-      if (err instanceof multer.MulterError) {
-        throw new Error(err);
-      } else if (err) {
-        throw new Error(err);
-      }
-    })
-  } catch {
-    debug(err);
-    next(err);
-  }
-  res.redirect(301, '/');
-});
+// const uploadImgThumbnail = uploadThumbnail.single('thumbnail');
+// app.post('/thumbnail', (req, res, next) => {
+//   debug(req.file);
+//   debug(req.body);
+//   try {
+//     uploadImgThumbnail(req, res, (err) => {
+//       if (err instanceof multer.MulterError) {
+//         throw new Error(err);
+//       } else if (err) {
+//         throw new Error(err);
+//       }
+//     })
+//   } catch {
+//     debug(err);
+//     next(err);
+//   }
+//   res.redirect(301, '/');
+// });
 
-const uploadImgAdminArray = uploadImgAdmin.array('photos', 12);
+
 /** 複数fileをアップロードする時 */
-app.post('/multiple', (req, res, next) => {
-  try {
-    uploadImgAdminArray(req, res, (err) => {
-      debug(req.files);
-      debug(req.body);
-      if (err instanceof multer.MulterError) {
-        throw new Error(err);
-      } else if (err) {
-        throw new Error(err);
-      }
-    })
-  } catch {
-    debug(err);
-    next(err);
-  }
-  res.redirect(301, '/');
+app.post('/multiple', async (req, res, next) => {
+  debug(req.body);
+  debug(req.files);
+  await multiUpload(req, res);
+  res.send('multi');
+  // res.redirect(301, '/');
 });
 
 /** 複数種類nameの組み合わせ */
-const uploadAdminField = uploadImgAdmin.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
+// const uploadAdminField = uploadImgAdmin.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
 
-app.post('/multipart', (req, res, next) => {
-  debug(req.files);
-  debug(req.body);
-  try {
-    uploadAdminField(req, res, (err) => {
-      if (err instanceof multer.MulterError) {
-        throw new Error(err);
-      } else if (err) {
-        throw new Error(err);
-      }
-    })
-  } catch {
-    debug(err);
-    next(err);
-  }
-  res.redirect(301, '/');
-})
+// app.post('/multipart', (req, res, next) => {
+//   debug(req.files);
+//   debug(req.body);
+//   try {
+//     uploadAdminField(req, res, (err) => {
+//       if (err instanceof multer.MulterError) {
+//         throw new Error(err);
+//       } else if (err) {
+//         throw new Error(err);
+//       }
+//     })
+//   } catch {
+//     debug(err);
+//     next(err);
+//   }
+//   res.redirect(301, '/');
+// })
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

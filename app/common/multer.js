@@ -26,7 +26,7 @@ const storage = (fileName) => {
   return multer.diskStorage({
     /** どのフォルダにどんな名前で保存するか */
     destination: (req, file, cb) => {
-      const dir = path.join(__dirname, `../uploads/product/${req.body.name}/`);
+      const dir = path.join(__dirname, `../../uploads/product/${req.body.name}/`);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir);
       cb(null, dir);
     },
