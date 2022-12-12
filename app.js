@@ -71,10 +71,10 @@ app.post('/thumbnail', (req, res, next) => {
 const uploadImgAdminArray = uploadImgAdmin.array('photos', 12);
 /** 複数fileをアップロードする時 */
 app.post('/multiple', (req, res, next) => {
-  debug(req.files);
-  debug(req.body);
   try {
     uploadImgAdminArray(req, res, (err) => {
+      debug(req.files);
+      debug(req.body);
       if (err instanceof multer.MulterError) {
         throw new Error(err);
       } else if (err) {
