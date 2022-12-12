@@ -4,6 +4,7 @@
 const debug = require("debug")("http:multer");
 const multer = require('multer');
 const path = require('path');
+const fs = require("fs");
 
 /**
  * ファイルアップロードディレクトリ
@@ -21,15 +22,20 @@ const path = require('path');
  * @param {*} fileName 保存したいファイル名を入力
  * @returns multerEngine
  */
-const storage = (folderName, fileName) => {
+const storage = (fileName) => {
   return multer.diskStorage({
     /** どのフォルダにどんな名前で保存するか */
     destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, `../uploads/${folderName}/`))
+      const dir = path.join(__dirname, `../uploads/${req.body.name}/`);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+      cb(null, dir);
     },
     filename: (req, file, cb) => {
-      cb(null, fileName + '.' + file.mimetype.split('/')[1])
+      cb(null, file.originalname)
     }
+    // filename: (req, file, cb) => {
+    //   cb(null, fileName + '.' + file.mimetype.split('/')[1])
+    // }
   })
 };
 
@@ -71,7 +77,7 @@ const fileFilterPdf = (req, file, cb) => {
 /** 画像ファイルアップロード */
 /** admin */
 const uploadImgAdmin = multer({
-  storage: storage('test', 'temp'),
+  storage: storage('temp'),
   fileFilter: fileFilterImg,
   // 画像の制限の最適が不明
   // limits: {}
