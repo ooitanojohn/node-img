@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
-const debug = require("debug")("http:multer");
+const debug = require("debug")("http:app");
 
 const { multiUpload } = require("./app/controller/indexController");
 const app = express();
@@ -70,9 +70,10 @@ app.use('/users', usersRouter);
 
 /** 複数fileをアップロードする時 */
 app.post('/multiple', async (req, res, next) => {
-  debug(req.body);
-  debug(req.files);
-  await multiUpload(req, res);
+  await multiUpload(req, res)
+    .then((req) => {
+      debug(req.body);
+    });
   res.send('multi');
   // res.redirect(301, '/');
 });

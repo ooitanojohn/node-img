@@ -50,7 +50,7 @@ const storage = (fileName) => {
  */
 /** imgフィルタ */
 const fileFilterImg = (req, file, cb) => {
-  debug(file);
+  // debug(file);
   if (["image/png", "image/jpeg", "image/jpg"].includes(file.mimetype)) {
     cb(null, true);
     return;
