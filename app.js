@@ -8,7 +8,7 @@ const usersRouter = require('./routes/users');
 
 const debug = require("debug")("http:app");
 
-const { multiUpload } = require("./app/controller/indexController");
+const { upload, multiUpload } = require("./app/controller/indexUploader");
 const app = express();
 
 // view engine setup
@@ -23,56 +23,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-
-// const uploadImgAdminSingle = uploadImgAdmin.single('avatar');
-// /** file単体で送る場合のファイルとリクエストbody */
-// app.post('/single', (req, res, next) => {
-//   debug(req.file);
-//   debug(req.body);
-//   try {
-//     uploadImgAdminSingle(req, res, (err) => {
-//       /** マルターで判定できたエラー */
-//       if (err instanceof multer.MulterError) {
-//         throw new Error(err);
-//       } else if (err) {
-//         /** 謎エラー */
-//         throw new Error(err);
-//       }
-//     })
-//   } catch {
-//     debug(err);
-//     next(err);
-//   }
-//   // req.body.jsonを参照
-//   res.redirect(301, '/');
-// });
-
 /** file単体で送る場合のファイルとリクエストbody */
-// const uploadImgThumbnail = uploadThumbnail.single('thumbnail');
-// app.post('/thumbnail', (req, res, next) => {
-//   debug(req.file);
-//   debug(req.body);
-//   try {
-//     uploadImgThumbnail(req, res, (err) => {
-//       if (err instanceof multer.MulterError) {
-//         throw new Error(err);
-//       } else if (err) {
-//         throw new Error(err);
-//       }
-//     })
-//   } catch {
-//     debug(err);
-//     next(err);
-//   }
-//   res.redirect(301, '/');
-// });
-
+app.post('/single', async (req, res, next) => {
+  await upload(req, res, next)
+    .then((req) => {
+      debug(req.body);
+    })
+    .catch((err) => {
+      debug(err);
+    });
+  // req.body.jsonを参照
+  res.redirect(301, '/');
+});
 
 /** 複数fileをアップロードする時 */
 app.post('/multiple', async (req, res, next) => {
   await multiUpload(req, res)
     .then((req) => {
       debug(req.body);
+    })
+    .catch((err) => {
+      debug(err);
     });
   res.send('multi');
   // res.redirect(301, '/');
@@ -98,6 +69,27 @@ app.post('/multiple', async (req, res, next) => {
 //   }
 //   res.redirect(301, '/');
 // })
+
+
+/** file単体で送る場合のファイルとリクエストbody */
+// const uploadImgThumbnail = uploadThumbnail.single('thumbnail');
+// app.post('/thumbnail', (req, res, next) => {
+//   debug(req.file);
+//   debug(req.body);
+//   try {
+//     uploadImgThumbnail(req, res, (err) => {
+//       if (err instanceof multer.MulterError) {
+//         throw new Error(err);
+//       } else if (err) {
+//         throw new Error(err);
+//       }
+//     })
+//   } catch {
+//     debug(err);
+//     next(err);
+//   }
+//   res.redirect(301, '/');
+// });
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

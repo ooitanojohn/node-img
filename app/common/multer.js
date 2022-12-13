@@ -26,7 +26,7 @@ const storage = (fileName) => {
   return multer.diskStorage({
     /** どのフォルダにどんな名前で保存するか */
     destination: (req, file, cb) => {
-      const dir = path.join(__dirname, `../../uploads/product/${req.body.name}/`);
+      const dir = path.join(__dirname, `../../uploads/product/${req.body.folderName}/`);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir);
       cb(null, dir);
     },
@@ -77,14 +77,14 @@ const fileFilterPdf = (req, file, cb) => {
 /** 画像ファイルアップロード */
 /** admin */
 const uploadImgAdmin = multer({
-  storage: storage('temp'),
+  storage: storage(),
   fileFilter: fileFilterImg,
   // 画像の制限の最適が不明
   // limits: {}
 });
 /** user */
 const uploadImgUser = multer({
-  storage: storage,
+  storage: storage(),
   fileFilter: fileFilterImg,
 });
 
