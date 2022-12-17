@@ -8,7 +8,7 @@ const usersRouter = require('./routes/users');
 
 const debug = require("debug")("http:app");
 
-const { uploadUser, uploadAdmin, multiUploadAdmin } = require("./app/controller/indexUploader");
+const { uploadUser, uploadAdmin, multiUploadAdmin } = require("./app/module/indexUploader");
 const app = express();
 
 // view engine setup
@@ -23,19 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-/** file単体で送る場合のファイルとリクエストbody */
-app.post('/single/:params', async (req, res, next) => {
-  await uploadUser(req, res, next)
-    .then((req) => {
-      debug(req.body);
-      debug(req.file);
-    })
-    .catch((err) => {
-      debug(err);
-    });
-  // req.body.jsonを参照
-  res.redirect(301, '/');
-});
+
 
 /** 複数fileをアップロードする時 */
 app.post('/multiple', async (req, res, next) => {

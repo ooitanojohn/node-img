@@ -28,10 +28,10 @@ const uploadUser = (req, res) => {
           /** 謎エラー */
           throw new Error(err);
         }
-        resolve(req);
+        resolve(req,res);
       });
-    } catch {
-      debugMulti(err);
+    } catch (err) {
+      debug(err);
       reject(new Error(err));
     }
   })
@@ -62,8 +62,8 @@ const uploadAdmin = (req, res) => {
         }
         resolve(req);
       });
-    } catch {
-      debugMulti(err);
+    } catch (err) {
+      debug(err);
       reject(new Error(err));
     }
   })
@@ -75,7 +75,7 @@ const multiUploadAdmin = (req, res) => {
   return new Promise((resolve, reject) => {
     try {
       uploadImgAdminArray(req, res, (err) => {
-        // debugMulti(req.files);
+        // debug(req.files);
         if (err instanceof multer.MulterError) {
           throw new Error(err);
         } else if (err) {
@@ -83,8 +83,8 @@ const multiUploadAdmin = (req, res) => {
         }
         resolve(req);
       })
-    } catch {
-      debugMulti(err);
+    } catch (err) {
+      debug(err);
       reject(new Error(err));
     }
   });
