@@ -1,12 +1,51 @@
 const debugMulti = require("debug")("http:multi");
 const multer = require('multer');
-const { uploadImgAdmin, uploadThumbnail } = require("../common/multer");
+const { storage,fileFilterImg,fileFilterPdf } = require("../common/multer");
 
+/**
+ * user
+ */
+/** 設定 */
+const uploadImgUser = multer({
+  storage: storage('user'),
+  fileFilter: fileFilterImg,
+});
+/** 単体アップロード */
+const uploadImgUserSingle = uploadImgUser.single('avatar');
+const uploadUser = (req, res) => {
+  return new Promise((resolve, reject) => {
+    try {
+      uploadImgUserSingle(req, res, (err) => {
+        /** マルターで判定できたエラー */
+        if (err instanceof multer.MulterError) {
+          throw new Error(err);
+        } else if (err) {
+          /** 謎エラー */
+          throw new Error(err);
+        }
+      });
+    } catch {
+      debugMulti(err);
+      reject(new Error(err));
+    }
+    resolve(req);
+  })
+};
 
+/**
+ * admin
+ */
+/** admin */
+const uploadImgAdmin = multer({
+  storage: storage('product'),
+  fileFilter: fileFilterImg,
+  // 画像の制限の最適が不明
+  // limits: {}
+});
 /** 単体アップロード */
 const uploadImgAdminSingle = uploadImgAdmin.single('avatar');
-const upload = (req, res) => {
-  return new Promise(async (resolve, reject) => {
+const uploadAdmin = (req, res) => {
+  return new Promise((resolve, reject) => {
     try {
       uploadImgAdminSingle(req, res, (err) => {
         /** マルターで判定できたエラー */
@@ -27,7 +66,7 @@ const upload = (req, res) => {
 
 /** 複数枚アップロード */
 const uploadImgAdminArray = uploadImgAdmin.array('photos', 12);
-const multiUpload = (req, res) => {
+const multiUploadAdmin = (req, res) => {
   return new Promise((resolve, reject) => {
     try {
       uploadImgAdminArray(req, res, (err) => {
@@ -46,7 +85,18 @@ const multiUpload = (req, res) => {
   });
 };
 
+/** 画像のリサイズ  */
+const memoryStorage = multer.memoryStorage;
+const uploadThumbnail = multer({
+  storage: storage(),
+  fileFilter: fileFilterImg,
+});
+
+/** pdfアップロード */
+const uploadPdf = multer({
+  storage: storage(),
+  fileFilter: fileFilterPdf,
+});
 
 
-
-module.exports = { upload, multiUpload };
+module.exports = { uploadUser, uploadAdmin, multiUploadAdmin };

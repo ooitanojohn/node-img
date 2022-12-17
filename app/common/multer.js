@@ -22,11 +22,12 @@ const fs = require("fs");
  * @param {*} fileName 保存したいファイル名を入力
  * @returns multerEngine
  */
-const storage = (fileName) => {
+const storage = (folderName,fileName) => {
   return multer.diskStorage({
     /** どのフォルダにどんな名前で保存するか */
     destination: (req, file, cb) => {
-      const dir = path.join(__dirname, `../../uploads/product/${req.body.folderName}/`);
+      debug(req.body);
+      const dir = path.join(__dirname, `../../uploads/${folderName}/${req.body.folderName}/`);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir);
       cb(null, dir);
     },
@@ -68,40 +69,7 @@ const fileFilterPdf = (req, file, cb) => {
   cb(new TypeError("Invalid File Type"));
 };
 
-
-/**
- * multerのインスタンス設定
- * 下記に各種類の細かい設定
- * ファイル種類毎に変えよう！
- */
-/** 画像ファイルアップロード */
-/** admin */
-const uploadImgAdmin = multer({
-  storage: storage(),
-  fileFilter: fileFilterImg,
-  // 画像の制限の最適が不明
-  // limits: {}
-});
-/** user */
-const uploadImgUser = multer({
-  storage: storage(),
-  fileFilter: fileFilterImg,
-});
-
-/** 画像のリサイズ  */
-const memoryStorage = multer.memoryStorage;
-const uploadThumbnail = multer({
-  storage: storage(),
-  fileFilter: fileFilterImg,
-});
-
-/** pdfアップロード */
-const uploadPdf = multer({
-  storage: storage(),
-  fileFilter: fileFilterPdf,
-});
-
-module.exports = { uploadImgAdmin, uploadImgUser, uploadPdf, uploadThumbnail };
+module.exports = { storage,fileFilterImg,fileFilterPdf };
 
 
 /** 使用例 */

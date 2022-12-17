@@ -8,7 +8,7 @@ const usersRouter = require('./routes/users');
 
 const debug = require("debug")("http:app");
 
-const { upload, multiUpload } = require("./app/controller/indexUploader");
+const { uploadUser, uploadAdmin, multiUploadAdmin } = require("./app/controller/indexUploader");
 const app = express();
 
 // view engine setup
@@ -25,7 +25,7 @@ app.use('/users', usersRouter);
 
 /** file単体で送る場合のファイルとリクエストbody */
 app.post('/single', async (req, res, next) => {
-  await upload(req, res, next)
+  await uploadUser(req, res, next)
     .then((req) => {
       debug(req.body);
     })
@@ -38,7 +38,7 @@ app.post('/single', async (req, res, next) => {
 
 /** 複数fileをアップロードする時 */
 app.post('/multiple', async (req, res, next) => {
-  await multiUpload(req, res)
+  await multiUploadAdmin(req, res)
     .then((req) => {
       debug(req.body);
     })
@@ -51,7 +51,6 @@ app.post('/multiple', async (req, res, next) => {
 
 /** 複数種類nameの組み合わせ */
 // const uploadAdminField = uploadImgAdmin.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
-
 // app.post('/multipart', (req, res, next) => {
 //   debug(req.files);
 //   debug(req.body);
