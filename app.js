@@ -28,6 +28,7 @@ app.post('/single/:params', async (req, res, next) => {
   await uploadUser(req, res, next)
     .then((req) => {
       debug(req.body);
+      debug(req.file);
     })
     .catch((err) => {
       debug(err);

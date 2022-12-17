@@ -22,11 +22,11 @@ const fs = require("fs");
  * @param {*} fileName 保存したいファイル名を入力
  * @returns multerEngine
  */
-const storage = (folderName,fileName) => {
+const storage = (folderName, fileName) => {
   return multer.diskStorage({
     /** どのフォルダにどんな名前で保存するか */
     destination: (req, file, cb) => {
-      debug(req.body);
+      // debug(req.body);
       const dir = path.join(__dirname, `../../uploads/${folderName}/${req.params.params}/`);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir);
       cb(null, dir);
@@ -61,7 +61,7 @@ const fileFilterImg = (req, file, cb) => {
 
 /** pdf,csvフィルタ */
 const fileFilterPdf = (req, file, cb) => {
-  debug(file.mimetype);
+  // debug(file.mimetype);
   if (["application/pdf"].includes(file.mimetype)) {
     cb(null, true);
     return;
@@ -69,7 +69,7 @@ const fileFilterPdf = (req, file, cb) => {
   cb(new TypeError("Invalid File Type"));
 };
 
-module.exports = { storage,fileFilterImg,fileFilterPdf };
+module.exports = { storage, fileFilterImg, fileFilterPdf };
 
 
 /** 使用例 */

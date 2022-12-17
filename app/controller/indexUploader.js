@@ -1,11 +1,14 @@
-const debugMulti = require("debug")("http:multi");
+const debug = require("debug")("http:uploader");
 const multer = require('multer');
-const { storage,fileFilterImg,fileFilterPdf } = require("../common/multer");
+const { storage, fileFilterImg, fileFilterPdf } = require("../common/multer");
 
 /**
  * user
  */
-/** 設定 */
+/**
+ * 設定
+ * storage,フォルダ名を指定
+ */
 const uploadImgUser = multer({
   storage: storage('user'),
   fileFilter: fileFilterImg,
@@ -16,6 +19,8 @@ const uploadUser = (req, res) => {
   return new Promise((resolve, reject) => {
     try {
       uploadImgUserSingle(req, res, (err) => {
+        // debug(req.file);
+        // debug(req.body);
         /** マルターで判定できたエラー */
         if (err instanceof multer.MulterError) {
           throw new Error(err);
@@ -23,12 +28,12 @@ const uploadUser = (req, res) => {
           /** 謎エラー */
           throw new Error(err);
         }
+        resolve(req);
       });
     } catch {
       debugMulti(err);
       reject(new Error(err));
     }
-    resolve(req);
   })
 };
 
@@ -55,12 +60,12 @@ const uploadAdmin = (req, res) => {
           /** 謎エラー */
           throw new Error(err);
         }
+        resolve(req);
       });
     } catch {
       debugMulti(err);
       reject(new Error(err));
     }
-    resolve(req);
   })
 };
 
@@ -76,12 +81,12 @@ const multiUploadAdmin = (req, res) => {
         } else if (err) {
           throw new Error(err);
         }
+        resolve(req);
       })
     } catch {
       debugMulti(err);
       reject(new Error(err));
     }
-    resolve(req);
   });
 };
 
