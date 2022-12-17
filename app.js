@@ -24,7 +24,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 /** file単体で送る場合のファイルとリクエストbody */
-app.post('/single', async (req, res, next) => {
+app.post('/single/:params', async (req, res, next) => {
   await uploadUser(req, res, next)
     .then((req) => {
       debug(req.body);

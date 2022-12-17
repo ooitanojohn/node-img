@@ -27,7 +27,7 @@ const storage = (folderName,fileName) => {
     /** どのフォルダにどんな名前で保存するか */
     destination: (req, file, cb) => {
       debug(req.body);
-      const dir = path.join(__dirname, `../../uploads/${folderName}/${req.body.folderName}/`);
+      const dir = path.join(__dirname, `../../uploads/${folderName}/${req.params.params}/`);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir);
       cb(null, dir);
     },
