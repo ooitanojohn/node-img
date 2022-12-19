@@ -21,6 +21,7 @@ const uploadUser = (req, res) => {
       uploadImgUserSingle(req, res, (err) => {
         // debug(req.file);
         // debug(req.body);
+        req.params.params = 100;
         /** マルターで判定できたエラー */
         if (err instanceof multer.MulterError) {
           throw new Error(err);
@@ -28,7 +29,7 @@ const uploadUser = (req, res) => {
           /** 謎エラー */
           throw new Error(err);
         }
-        resolve(req,res);
+        resolve(req, res);
       });
     } catch (err) {
       debug(err);

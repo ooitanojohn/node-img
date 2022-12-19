@@ -3,6 +3,11 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.15.18/dist/css/uikit.min.css" />
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.18/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.18/dist/js/uikit-icons.min.js"></script>
   </head>
   <body>
     <h1><%= title %></h1>
@@ -13,13 +18,21 @@
       <button type="submit">送信</button>
     </form> -->
     <h2>単体ファイルupload</h2>
-    <form action="/single/3" method="post" enctype="multipart/form-data">
-      <input type="file" name="avatar" />
+    <form action="/single/3" method="post" enctype="multipart/form-data" id="uploadForm">
+      <div class="js-upload uk-placeholder uk-text-center">
+        <span uk-icon="icon: cloud-upload"></span>
+        <span class="uk-text-middle">Attach binaries by dropping them here or</span>
+        <div uk-form-custom>
+          <input type="file" name="avatar" multiple>
+          <span class="uk-link">selecting one</span>
+        </div>
+      </div>
+      <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
       <button type="submit">送信</button>
     </form>
     <h2>複数ファイルアップロード</h2>
     <form action="/multiple/5" method="post" enctype="multipart/form-data">
-      <input type="file" name="photos" multiple />
+      <input type="file" name="photos"/>
       <button type="submit">送信</button>
     </form>
     <h2>複数種類nameの組み合わせ</h2>
@@ -29,4 +42,65 @@
       <button type="submit">送信</button>
     </form>
   </body>
+  <script>
+    var bar = document.getElementById('js-progressbar');
+    const uploadForm = document.querySelector('#uploadForm');
+    const uploadFormUrl = uploadForm.getAttribute('action');
+    console.log(uploadForm);
+    UIkit.upload('.js-upload', {
+      url: `http://localhost:9000${uploadFormUrl}`,
+      multiple: false,
+      name: 'avatar',
+
+      beforeSend: function () {
+        console.log('beforeSend', arguments);
+      },
+      beforeAll: function () {
+        console.log('beforeAll', arguments);
+      },
+      load: function () {
+        console.log('load', arguments);
+      },
+      error: function () {
+        console.log('error', arguments);
+      },
+      complete: function () {
+        console.log('complete', arguments);
+      },
+
+      loadStart: function (e) {
+        console.log('loadStart', arguments);
+
+        bar.removeAttribute('hidden');
+        bar.max = e.total;
+        bar.value = e.loaded;
+      },
+
+      progress: function (e) {
+        console.log('progress', arguments);
+
+        bar.max = e.total;
+        bar.value = e.loaded;
+      },
+
+      loadEnd: function (e) {
+        console.log('loadEnd', arguments);
+
+        bar.max = e.total;
+        bar.value = e.loaded;
+      },
+
+      completeAll: function () {
+        console.log('completeAll', arguments);
+
+        setTimeout(function () {
+          bar.setAttribute('hidden', 'hidden');
+        }, 1000);
+
+        alert('Upload Completed');
+      }
+
+    });
+
+  </script>
 </html>

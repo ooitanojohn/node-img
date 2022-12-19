@@ -51,7 +51,7 @@ const storage = (folderName, fileName) => {
  */
 /** imgフィルタ */
 const fileFilterImg = (req, file, cb) => {
-  // debug(file);
+  debug(file);
   if (["image/png", "image/jpeg", "image/jpg"].includes(file.mimetype)) {
     cb(null, true);
     return;
@@ -61,7 +61,7 @@ const fileFilterImg = (req, file, cb) => {
 
 /** pdf,csvフィルタ */
 const fileFilterPdf = (req, file, cb) => {
-  // debug(file.mimetype);
+  debug(file.mimetype);
   if (["application/pdf"].includes(file.mimetype)) {
     cb(null, true);
     return;
